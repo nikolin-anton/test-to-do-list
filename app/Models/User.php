@@ -22,4 +22,12 @@ class User extends Authenticatable
         'last_name',
         'email',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function lists(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(TodoList::class);
+    }
 }
