@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Enum\StatusList;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -23,5 +24,9 @@ class UserController extends Controller
     public function store(UserStoreRequest $request)
     {
         return UserResource::make(User::create($request->validated()));
+    }
+
+    public function getLists(User $user) {
+        return UserResource::make($user->loadMissing('toDoLists'));
     }
 }

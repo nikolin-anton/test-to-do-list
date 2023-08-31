@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Enum\StatusList;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class TodoListUpdateRequest extends FormRequest
 {
@@ -25,6 +27,7 @@ class TodoListUpdateRequest extends FormRequest
             'list_id' => ['nullable', 'integer', 'exists:lists,id'],
             'title' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
+            'status' => ['nullable', new Enum(StatusList::class)],
             'priority' => ['nullable', 'integer', 'between:1,5']
         ];
     }

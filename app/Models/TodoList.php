@@ -11,21 +11,16 @@ class TodoList extends Model
     use HasFactory;
 
     /**
-     * @var string
-     */
-    protected $table  = 'lists';
-
-    /**
      * @var string[]
      */
     protected $guarded = ['id'];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {
-        return $this->hasOne(User::class, 'list_id');
+        return $this->belongsTo(User::class);
     }
 
     /**
@@ -33,7 +28,7 @@ class TodoList extends Model
      */
     public function childrenLists()
     {
-        return $this->hasMany(TodoList::class, 'list_id');
+        return $this->hasMany(TodoList::class);
     }
 
     /**
@@ -41,7 +36,7 @@ class TodoList extends Model
      */
     public function parentList()
     {
-        return $this->belongsTo(TodoList::class, 'list_id' , 'id');
+        return $this->belongsTo(TodoList::class);
     }
 
     public function scopeFilter(Builder $query){

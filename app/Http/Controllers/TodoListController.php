@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AddUserToListRequest;
 use App\Http\Requests\TodoListStoreRequest;
 use App\Http\Requests\TodoListUpdateRequest;
 use App\Http\Resources\TodoListResource;
+use App\Http\Resources\TodoListShowResource;
+use App\Models\Enum\StatusList;
 use App\Models\TodoList;
+use App\Models\User;
 
 class TodoListController extends Controller
 {
@@ -14,7 +18,7 @@ class TodoListController extends Controller
      */
     public function index()
     {
-        return TodoListResource::collection(TodoList::whereNull('list_id')
+        return TodoListResource::collection(TodoList::whereNull('todo_list_id')
             ->with('childrenLists')
             ->filter()
             ->get()
@@ -42,6 +46,16 @@ class TodoListController extends Controller
      */
     public function update(TodoListUpdateRequest $request, TodoList $list)
     {
+        $data = $request->validated();
+        if ($data['status'] === StatusList::DONE->value) {
+            $hasOutstandingSubtasks = $list->childrenLists->contains(function ($value) {
+                return $value->status === StatusList::DONE->value;
+            });
+
+            if ($hasOutstandingSubtasks) {
+                return response()->json(['message' => 'This task has outstanding subtasks'], 403);
+            }
+        }
         $list->update($request->validated());
         return TodoListResource::make($list->refresh());
     }
@@ -53,5 +67,12 @@ class TodoListController extends Controller
     {
         $list->delete();
         return response()->json(['message' => 'Ok'], 200);
+    }
+
+    public function addUser( TodoList $list, AddUserToListRequest $request)
+    {
+        $list->user()->associate(User::find($request->validated('user_id')));
+        $list->save();
+        return TodoListShowResource::make($list->loadMissing('user'));
     }
 }

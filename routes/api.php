@@ -19,6 +19,8 @@ use App\Http\Controllers\TodoListController;
 //Users
 Route::get('/users', [UserController::class, 'index']);
 Route::post('/users', [UserController::class, 'store']);
+Route::get('/users/{user}/lists', [UserController::class, 'getLists']);
 
 //TodoList
 Route::apiResource('/lists', TodoListController::class);
+Route::post('/lists/{list}/add-user', [TodoListController::class, 'addUser']);

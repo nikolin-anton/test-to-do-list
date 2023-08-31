@@ -24,10 +24,10 @@ class User extends Authenticatable
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function lists(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function toDoLists(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->belongsTo(TodoList::class);
+        return $this->hasMany(TodoList::class);
     }
 }

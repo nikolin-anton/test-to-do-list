@@ -14,9 +14,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lists', function (Blueprint $table) {
+        Schema::create('todo_lists', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('list_id')
+            $table->foreignId('user_id')
+                ->nullable()
+                ->constrained();
+            $table->foreignId('todo_list_id')
                 ->nullable()
                 ->constrained()
                 ->onDelete('cascade');
