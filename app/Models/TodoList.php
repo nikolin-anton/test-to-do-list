@@ -64,6 +64,15 @@ class TodoList extends Model
                     ->with('childrenLists', function ($query) {
                         $query->orderBy(request('sort_by'), request('order_by', 'asc'));
                     });
+            })
+            ->when(request('search'), function ($query) {
+                $request = request('search');
+                $query->where(function ($query) use($request){
+                    $query->where('title', $request)
+                        ->orWhereHas('childrenLists', function ($query) use ($request){
+                            $query->where('title', $request);
+                        });
+                });
             });
     }
 }
