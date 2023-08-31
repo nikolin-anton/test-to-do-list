@@ -21,6 +21,7 @@ class TodoListController extends Controller
         return TodoListResource::collection(TodoList::whereNull('todo_list_id')
             ->with('childrenLists')
             ->filter()
+            ->search()
             ->get()
         );
     }
@@ -48,6 +49,7 @@ class TodoListController extends Controller
     {
         $data = $request->validated();
         if ($data['status'] === StatusList::DONE->value) {
+            $data['completed_at'] = now();
             $hasOutstandingSubtasks = $list->childrenLists->contains(function ($value) {
                 return $value->status === StatusList::DONE->value;
             });
@@ -56,7 +58,7 @@ class TodoListController extends Controller
                 return response()->json(['message' => 'This task has outstanding subtasks'], 403);
             }
         }
-        $list->update($request->validated());
+        $list->update($data);
         return TodoListResource::make($list->refresh());
     }
 

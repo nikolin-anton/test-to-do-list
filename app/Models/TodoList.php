@@ -41,7 +41,7 @@ class TodoList extends Model
 
     public function scopeFilter(Builder $query){
         return $query->when(request('status'), function ($query) {
-            $query->where('status', request('status'))
+             $query->where('status', request('status'))
                 ->with('childrenLists', function ($query) {
                    $query->where('status', request('status'));
                 });
@@ -64,15 +64,15 @@ class TodoList extends Model
                     ->with('childrenLists', function ($query) {
                         $query->orderBy(request('sort_by'), request('order_by', 'asc'));
                     });
-            })
-            ->when(request('search'), function ($query) {
-                $request = request('search');
-                $query->where(function ($query) use($request){
-                    $query->where('title', $request)
-                        ->orWhereHas('childrenLists', function ($query) use ($request){
-                            $query->where('title', $request);
-                        });
-                });
             });
+
+    }
+
+    /**
+     * @param Builder $query
+     * @return Builder|\Illuminate\Support\HigherOrderWhenProxy
+     */
+    public function scopeSearch(Builder $query){
+        return $query->when(request('search') , fn() => $this->where('title', request('search')));
     }
 }
